@@ -4,6 +4,11 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Skeleton } from "primereact/skeleton";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const Knowledge = () => {
   const [data, setData] = useState([
@@ -42,30 +47,54 @@ const Knowledge = () => {
   ]);
 
   const [loading, setLoading] = useState(false);
-  const [delLoading, setDelLoading] = useState(false)
+  const [delLoading, setDelLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [event, setEvent] = useState({
+    name: "",
+    category: "",
+    date: { $date: "" },
+    city: "",
+    venue: "",
+  });
+
+  const category = ["Intelligence Series", "iDAC Expo"];
+
+  const handleDateChange = (e) => {
+    const isoString = new Date(e.value).toISOString();
+    setEvent({ ...event, date: { $date: isoString } });
+  };
+
+  const footerContent = (
+        <div>
+            <Button label="Cancel" icon="pi pi-times" severity="danger" onClick={() => setVisible(false)} className="p-button-text" />
+            <Button label="Save" icon="pi pi-save" severity="info" onClick={() => setVisible(false)} autoFocus />
+        </div>
+    );
+
   const navigate = useNavigate();
 
-  
-
   const deleteButtonTemplate = (rowData) => (
-
     <div>
       <Button
-      icon="pi pi-trash"
-      className="p-button-danger p-button-sm"
-      onClick={(e) => {
-        
-      }}
-    />
+        icon="pi pi-trash"
+        className="p-button-danger p-button-sm"
+        onClick={(e) => {}}
+      />
     </div>
-    
   );
-
-  
 
   return (
     <div className="my-10">
-      <div className="text-3xl">All Events</div>
+      <div className="w-full flex items-center justify-between">
+        <div className="text-3xl">All Events</div>
+        <Button
+          label="Add Event"
+          icon="pi pi-plus"
+          severity="info"
+          onClick={() => setVisible(true)}
+        />
+      </div>
+
       {loading ? (
         <div className="my-5 h-full">
           <Skeleton height="400px" width="100%" borderRadius="10px" />
@@ -121,6 +150,71 @@ const Knowledge = () => {
           )}
         </div>
       )}
+      <Dialog
+        header="Add New Event"
+        visible={visible}
+        maximizable
+        style={{ width: "50vw" }}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+        }}
+        footer={footerContent}
+        position="center"
+      >
+        <div>
+          <div className="space-y-3 my-5 w-full">
+            <div>Name</div>
+            <InputText
+              className="w-full"
+              value={event.venue}
+              placeholder="Set of the Event"
+              onChange={(e) => setEvent({ ...event, venue: e.value })}
+            />
+          </div>
+          <div className="space-y-3 my-3">
+            <div>Category</div>
+            <Dropdown
+              value={event.category}
+              onChange={(e) => setEvent({ ...event, category: e.value })}
+              editable
+              options={category.map((c) => c)}
+              placeholder="Select a Category"
+              className="w-full md:w-14rem"
+            />
+          </div>
+          <div className="flex gap-6">
+            <div className="space-y-3 my-3 w-full">
+              <div>Date</div>
+              <Calendar
+                placeholder="Select Date"
+                value={new Date(event.date.$date)} // correct value source & type
+                onChange={handleDateChange}
+                dateFormat="dd/mm/yy"
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-3 my-3 w-full">
+              <div>City</div>
+              <InputText
+                className="w-full"
+                value={event.city}
+                placeholder="Set City"
+                onChange={(e) => setEvent({ ...event, city: e.value })}
+              />
+            </div>
+          </div>
+          <div className="space-y-3 my-3 w-full">
+            <div>Venue</div>
+            <InputTextarea
+              className="w-full"
+              value={event.venue}
+              placeholder="Set Venue"
+              onChange={(e) => setEvent({ ...event, venue: e.value })}
+            />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };

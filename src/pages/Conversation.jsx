@@ -66,19 +66,24 @@ const Conversation = () => {
               <Column
                 field="name"
                 header="Name"
-                style={{ width: "33.33%" }}
+                style={{ width: "25%" }}
+              ></Column>
+              <Column
+                field="phone_number"
+                header="Phone Number"
+                style={{ width: "25%" }}
               ></Column>
               <Column
                 field="lastActive"
                 sortable
                 header="Last Active"
-                style={{ width: "33.33%" }}
+                style={{ width: "25%" }}
               ></Column>
               <Column
                 field="interactions"
                 header="Interactions"
                 sortable
-                style={{ width: "33.33" }}
+                style={{ width: "25%" }}
               ></Column>
             </DataTable>
           ) : (

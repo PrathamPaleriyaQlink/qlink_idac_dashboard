@@ -8,6 +8,7 @@ import 'primeicons/primeicons.css'; //icons
 import Conversation from './pages/Conversation';
 import Knowledge from './pages/Knowledge';
 import Person from './pages/Person';
+import Event from './pages/event';
 
 
 
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
         <Route path='/conversation' element={<Conversation/>}/>
         <Route path='/people/:id' element={<Person/>}/>
         <Route path='/knowledge' element={<Knowledge/>}/>
+        <Route path='/events/:id' element={<Event/>}/>
       </Route>
     </>
   )
