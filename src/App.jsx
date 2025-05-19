@@ -7,6 +7,7 @@ import 'primereact/resources/primereact.min.css'; //core css
 import 'primeicons/primeicons.css'; //icons
 import Conversation from './pages/Conversation';
 import Knowledge from './pages/Knowledge';
+import Person from './pages/Person';
 
 
 
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<RootLayout />}>
         <Route path='/' element={<Home/>}/>
         <Route path='/conversation' element={<Conversation/>}/>
+        <Route path='/people/:id' element={<Person/>}/>
         <Route path='/knowledge' element={<Knowledge/>}/>
       </Route>
     </>

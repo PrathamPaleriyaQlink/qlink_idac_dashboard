@@ -17,14 +17,14 @@ const Home = () => {
     <div className="w-full my-10">
       <Toast ref={toast} />
       { loading ? (
-        <div className="grid grid-cols-4 w-full gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full gap-5">
           <Skeleton height="120px" width="100%" borderRadius="10px"/>
           <Skeleton height="120px" width="100%" borderRadius="10px"/>
           <Skeleton height="120px" width="100%" borderRadius="10px"/>
           <Skeleton height="120px" width="100%" borderRadius="10px"/>
         </div>
       ) : (
-        <div className="grid grid-cols-4 w-full gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full gap-5">
         <StatsCard 
           title={"Total Messages"}
           value={"3000"}
