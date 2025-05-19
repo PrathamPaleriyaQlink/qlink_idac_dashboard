@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Skeleton } from "primereact/skeleton";
 
 const Conversation = () => {
   const [data, setData] = useState([
@@ -27,6 +28,8 @@ const Conversation = () => {
     { name: "Ritika Saxena", lastActive: "2025-05-14", interactions: 16 },
     { name: "Aditya Rao", lastActive: "2025-05-12", interactions: 28 },
   ]);
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState(null);
 
   const navigate = useNavigate();
   const items = [
@@ -43,8 +46,12 @@ const Conversation = () => {
 
   return (
     <div className="my-10">
-      <div className="">
-        <div className="text-3xl">All Contacts</div>
+      <div className="text-3xl">All Contacts</div>
+      {loading ? (
+        <div className="my-5 h-full">
+          <Skeleton height="400px" width="100%" borderRadius="10px"/>
+        </div>
+      ) : (
         <div className="my-5 h-full">
           {data.length > 0 ? (
             <DataTable
@@ -78,7 +85,7 @@ const Conversation = () => {
             <div className="text-gray-400">No Data Available</div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 };
