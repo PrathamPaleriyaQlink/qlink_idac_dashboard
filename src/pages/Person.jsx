@@ -57,7 +57,7 @@ const Person = () => {
               </div>
               <div className="flex-1">
                 <div className="text-sm my-2">Chat History</div>
-                <div className="bg-gray-800 border border-black w-full h-[410px] rounded-xl my-3 overflow-auto">
+                <div className="bg-gray-800 border p-5 border-black w-full h-[410px] rounded-xl my-3 overflow-auto">
                   this is a test
                 </div>
               </div>
