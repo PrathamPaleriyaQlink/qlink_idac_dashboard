@@ -8,7 +8,7 @@ import 'primeicons/primeicons.css'; //icons
 import Conversation from './pages/Conversation';
 import Knowledge from './pages/Knowledge';
 import Person from './pages/Person';
-import Event from './pages/event';
+import Event from './pages/Event';
 
 
 
