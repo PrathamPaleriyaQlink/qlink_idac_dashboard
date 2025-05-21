@@ -1,5 +1,6 @@
 // api_utils.js
-const BASE_URL = "https://65.20.69.130:8000";
+// const BASE_URL = "https://65.20.69.130:8000";
+const BASE_URL = "https://qlink-idac-backend.vercel.app";
 
 function getToken() {
     return localStorage.getItem("token");
