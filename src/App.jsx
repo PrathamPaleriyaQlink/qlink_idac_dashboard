@@ -9,6 +9,7 @@ import Conversation from './pages/Conversation';
 import Knowledge from './pages/Knowledge';
 import Person from './pages/Person';
 import Event from './pages/Event';
+import Login from './pages/Login';
 
 
 
@@ -19,9 +20,10 @@ const router = createBrowserRouter(
         <Route path='/' element={<Home/>}/>
         <Route path='/conversation' element={<Conversation/>}/>
         <Route path='/people/:id' element={<Person/>}/>
-        <Route path='/knowledge' element={<Knowledge/>}/>
+        <Route path='/events' element={<Knowledge/>}/>
         <Route path='/events/:id' element={<Event/>}/>
       </Route>
+      <Route path='/login' element={<Login/>}/>
     </>
   )
 );

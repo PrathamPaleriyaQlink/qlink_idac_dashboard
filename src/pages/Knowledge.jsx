@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -9,93 +9,109 @@ import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { InputTextarea } from "primereact/inputtextarea";
+import { addEvent, getEvents, handleAuthError } from "../api_utils/api_routes";
+import { Toast } from "primereact/toast";
 
 const Knowledge = () => {
-  const [data, setData] = useState([
-    {
-      date: { $date: "2025-07-25T00:00:00.000Z" },
-      category: "Intelligence Series",
-      venue: null,
-      city: "Lucknow",
-      name: "iDAC Intelligence Series – Lucknow",
-      _id: { $oid: "68262485f18855c4da9182c3" },
-    },
-    {
-      date: { $date: "2025-08-10T00:00:00.000Z" },
-      category: "iDAC Expo",
-      venue: "Bombay Exhibition Centre",
-      city: "Mumbai",
-      name: "iDAC Expo – Mumbai",
-      _id: { $oid: "68262485f18855c4da9182c4" },
-    },
-    {
-      date: { $date: "2025-09-05T00:00:00.000Z" },
-      category: "Intelligence Series",
-      venue: null,
-      city: "Jaipur",
-      name: "iDAC Intelligence Series – Jaipur",
-      _id: { $oid: "68262485f18855c4da9182c5" },
-    },
-    {
-      date: { $date: "2025-10-15T00:00:00.000Z" },
-      category: "iDAC Expo",
-      venue: "Pragati Maidan",
-      city: "Delhi",
-      name: "iDAC Expo – Delhi",
-      _id: { $oid: "68262485f18855c4da9182c6" },
-    },
-  ]);
-
+  const toast = useRef(null);
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [delLoading, setDelLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [event, setEvent] = useState({
     name: "",
     category: "",
-    date: { $date: new Date().toISOString() },
+    date: new Date().toISOString(),
     city: "",
     venue: "",
   });
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const eventsData = await getEvents();
+      setData(eventsData);
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error occured while listing all the events. Please Refresh",
+        life: 3000,
+      });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const category = ["Intelligence Series", "iDAC Expo"];
 
   const handleDateChange = (e) => {
     const isoString = new Date(e.value).toISOString();
-    setEvent({ ...event, date: { $date: isoString } });
+    setEvent({ ...event, date: isoString });
   };
 
-  const handleSave = () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     const { name, category, city, date } = event;
-    if (!name || !category || !city || !date.$date) {
-      console.log(event);
-      alert("Please fill all required fields");
+    if (!name || !category || !city || !date) {
+      toast.current.show({
+        severity: "error",
+        summary: "Invalid Request",
+        detail: "Fill all the details",
+        life: 3000,
+      });
       return;
     }
-    console.log(event);
-    setVisible(false);
-  }
+    try {
+      setLoading(true);
+      await addEvent(event);
+      await fetchData();
+      setVisible(false);
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error occured while adding the events. Please Refresh",
+        life: 3000,
+      });
+    } finally {
+      setEvent({
+        name: "",
+        category: "",
+        date: new Date().toISOString(),
+        city: "",
+        venue: "",
+      });
+    }
+  };
 
   const footerContent = (
-        <div>
-            <Button label="Cancel" icon="pi pi-times" severity="danger" onClick={() => setVisible(false)} className="p-button-text" />
-            <Button label="Save" icon="pi pi-save" severity="info" onClick={handleSave} autoFocus />
-        </div>
-    );
-
-  const navigate = useNavigate();
-
-  const deleteButtonTemplate = (rowData) => (
     <div>
       <Button
-        icon="pi pi-trash"
-        className="p-button-danger p-button-sm"
-        onClick={(e) => {}}
+        label="Cancel"
+        icon="pi pi-times"
+        severity="danger"
+        onClick={() => setVisible(false)}
+        className="p-button-text"
+      />
+      <Button
+        label="Save"
+        loading={loading}
+        icon="pi pi-save"
+        severity="info"
+        onClick={handleSave}
+        autoFocus
       />
     </div>
   );
 
   return (
     <div className="my-10">
+      <Toast ref={toast} />
       <div className="w-full flex items-center justify-between">
         <div className="text-3xl">All Events</div>
         <Button
@@ -114,7 +130,7 @@ const Knowledge = () => {
         <div className="my-5 h-full">
           {data.length > 0 ? (
             <DataTable
-              onRowClick={(e) => navigate(`/events/${e.data._id.$oid}`)}
+              onRowClick={(e) => navigate(`/events/${e.data._id}`)}
               value={data}
               paginator
               rows={5}
@@ -142,18 +158,13 @@ const Knowledge = () => {
                 sortable
               />
               <Column
-                field="date.$date"
+                field="date"
                 header="Date"
                 body={(rowData) =>
-                  new Date(rowData.date.$date).toLocaleDateString()
+                  new Date(rowData.date).toLocaleDateString()
                 }
                 style={{ width: "20%" }}
                 sortable
-              />
-              <Column
-                body={deleteButtonTemplate}
-                header="Actions"
-                style={{ width: "10%", textAlign: "center" }}
               />
             </DataTable>
           ) : (
@@ -200,7 +211,7 @@ const Knowledge = () => {
               <div>Date</div>
               <Calendar
                 placeholder="Select Date"
-                value={new Date(event.date.$date)} // correct value source & type
+                value={new Date(event.date)} // correct value source & type
                 onChange={handleDateChange}
                 dateFormat="dd/mm/yy"
                 className="w-full"
@@ -222,6 +233,7 @@ const Knowledge = () => {
               className="w-full"
               value={event.venue}
               placeholder="Set Venue"
+              defaultValue={"N/A"}
               onChange={(e) => setEvent({ ...event, venue: e.target.value })}
             />
           </div>

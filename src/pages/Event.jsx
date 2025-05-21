@@ -1,29 +1,65 @@
 import { BreadCrumb } from "primereact/breadcrumb";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Divider } from "primereact/divider";
 import TextCard from "../components/ui/TextCard";
 import { Skeleton } from "primereact/skeleton";
 import { Button } from "primereact/button";
 import EditEvent from "../components/events/EditEvent";
-
+import { deleteEvent, getEventById } from "../api_utils/api_routes";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 const Event = () => {
   const { id } = useParams();
+  const toast = useRef(null);
   const navigate = useNavigate();
-  const [data, setData] = useState({
-    date: { $date: "2025-07-25T00:00:00.000Z" },
-    category: "Intelligence Series",
-    venue: null,
-    city: "Lucknow",
-    name: "iDAC Intelligence Series – Lucknow",
-    _id: { $oid: "68262485f18855c4da9182c3" },
-  });
+  const [data, setData] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [delLoading, setDelLoading] = useState(false);
+
+  const toggleSuccess = () => {
+    toast.current.show({
+      severity: "success",
+      summary: "Updated Successfully",
+      detail: "Event details updated successfully.",
+      life: 3000,
+    });
+  };
+
+  const toggleError = () => {
+    toast.current.show({
+      severity: "error",
+      summary: "Error Occured",
+      detail: "Error occured while updating event.",
+      life: 3000,
+    });
+  };
 
   const toggleEdit = () => {
     setIsEdit(!isEdit);
   };
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await getEventById(id);
+      setData(res);
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error occured while fetching event details. Please Refresh",
+        life: 3000,
+      });
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const items = [
     {
@@ -37,11 +73,47 @@ const Event = () => {
     },
   };
 
-  const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
+  const handleDelete = async () => {
+    setDelLoading(true)
+    try {
+      await deleteEvent(id)
+      navigate("/knowledge")
+    } catch (error) {
+        toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error occured while deleting event. Please Refresh",
+        life: 3000,
+      });
+    }
+    setDelLoading(false)
+  }
 
+  const accept = () => {
+        handleDelete()
+  }
+
+  const reject = () => {
+      
+  }
+
+  const deleteConfirm = () => {
+        confirmDialog({
+            message: 'Do you want to delete this record?',
+            header: 'Delete Confirmation',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            acceptClassName: 'p-button-danger',
+            accept,
+            reject
+        });
+    };
+
+  
   return (
     <div>
+      <Toast ref={toast} />
+      <ConfirmDialog />
       <div className="">
         <BreadCrumb
           model={items}
@@ -73,6 +145,8 @@ const Event = () => {
                         label="Delete"
                         icon="pi pi-trash"
                         severity="danger"
+                        loading={delLoading}
+                        onClick={deleteConfirm}
                       />
                     </div>
                   </div>
@@ -86,7 +160,9 @@ const Event = () => {
                       <div className="flex gap-6">
                         <TextCard
                           title={"Date"}
-                          value={new Date(data.date.$date).toLocaleDateString()}
+                          value={new Date(
+                            data?.date?.$date
+                          ).toLocaleDateString()}
                         />
                         <TextCard title={"City"} value={data.city} />
                       </div>
@@ -96,7 +172,14 @@ const Event = () => {
                 </div>
               </div>
             ) : (
-              <EditEvent data={data} toggleEdit={toggleEdit}/>
+              <EditEvent
+                data={data}
+                toggleEdit={toggleEdit}
+                id={id}
+                toggleError={toggleError}
+                toggleSuccess={toggleSuccess}
+                fetchData={fetchData}
+              />
             )}
           </div>
         ) : (

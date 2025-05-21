@@ -1,61 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Skeleton } from "primereact/skeleton";
+import { getUsers, handleAuthError } from "../api_utils/api_routes";
+import { Toast } from "primereact/toast";
 
 const Conversation = () => {
-  const [data, setData] = useState([
-    { name: "Aarav Mehta", lastActive: "2025-05-18", interactions: 42 },
-    { name: "Isha Sharma", lastActive: "2025-05-17", interactions: 18 },
-    { name: "Kabir Verma", lastActive: "2025-05-15", interactions: 27 },
-    { name: "Tanya Roy", lastActive: "2025-05-19", interactions: 56 },
-    { name: "Rahul Bansal", lastActive: "2025-05-16", interactions: 33 },
-    { name: "Diya Nair", lastActive: "2025-05-14", interactions: 12 },
-    { name: "Vedant Kapoor", lastActive: "2025-05-19", interactions: 61 },
-    { name: "Meera Joshi", lastActive: "2025-05-18", interactions: 25 },
-    { name: "Ananya Desai", lastActive: "2025-05-12", interactions: 9 },
-    { name: "Rohan Iyer", lastActive: "2025-05-13", interactions: 44 },
-    { name: "Saanvi Malhotra", lastActive: "2025-05-17", interactions: 38 },
-    { name: "Yash Tiwari", lastActive: "2025-05-15", interactions: 20 },
-    { name: "Nikita Agarwal", lastActive: "2025-05-11", interactions: 7 },
-    { name: "Arjun Pillai", lastActive: "2025-05-18", interactions: 50 },
-    { name: "Sneha Reddy", lastActive: "2025-05-10", interactions: 13 },
-    { name: "Manav Singh", lastActive: "2025-05-16", interactions: 31 },
-    { name: "Ira Bhattacharya", lastActive: "2025-05-13", interactions: 21 },
-    { name: "Dev Patel", lastActive: "2025-05-19", interactions: 63 },
-    { name: "Ritika Saxena", lastActive: "2025-05-14", interactions: 16 },
-    { name: "Aditya Rao", lastActive: "2025-05-12", interactions: 28 },
-  ]);
+  const toast = useRef(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
-
   const navigate = useNavigate();
-  const items = [
-    {
-      label: "InputText",
-    },
-  ];
-  const home = {
-    label: "All",
-    command: () => {
-      navigate("/conversation");
-    },
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const users = await getUsers();
+      setData(users);
+    } catch (error) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error occured while listing all the users. Please Refresh",
+        life: 3000,
+      });
+    }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="my-10">
+      <Toast ref={toast} />
       <div className="text-3xl">All Contacts</div>
       {loading ? (
         <div className="my-5 h-full">
-          <Skeleton height="400px" width="100%" borderRadius="10px"/>
+          <Skeleton height="400px" width="100%" borderRadius="10px" />
         </div>
       ) : (
         <div className="my-5 h-full">
           {data.length > 0 ? (
             <DataTable
-              onRowClick={(e) => navigate(`/people/${e.data.name}`)}
+              onRowClick={(e) => navigate(`/people/${e.data._id}`)}
               value={data}
               paginator
               rows={5}
@@ -64,7 +54,7 @@ const Conversation = () => {
               className="cursor-pointer custom-datatable"
             >
               <Column
-                field="name"
+                field="username"
                 header="Name"
                 style={{ width: "25%" }}
               ></Column>
@@ -74,11 +64,14 @@ const Conversation = () => {
                 style={{ width: "25%" }}
               ></Column>
               <Column
-                field="lastActive"
-                sortable
+                field="updated_at"
                 header="Last Active"
-                style={{ width: "25%" }}
-              ></Column>
+                body={(rowData) =>
+                  new Date(rowData.updated_at).toLocaleString()
+                }
+                style={{ width: "20%" }}
+                sortable
+              />
               <Column
                 field="interactions"
                 header="Interactions"

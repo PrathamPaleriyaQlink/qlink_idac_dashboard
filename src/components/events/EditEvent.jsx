@@ -6,15 +6,43 @@ import TextCard from "../ui/TextCard";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { InputTextarea } from "primereact/inputtextarea";
+import { updateEvent } from "../../api_utils/api_routes";
 
-const EditEvent = ({ data, toggleEdit }) => {
-  const [editData, setEditData] = useState(data);
+const EditEvent = ({ data, toggleEdit, id, toggleSuccess, toggleError, fetchData }) => {
+  const [editData, setEditData] = useState({
+    "name": data.name,
+    "category": data.category,
+    "date": data.date.$date,
+    "city": data.city,
+    "venue": data.venue || "N/A"
+  });
+  const [loading, setLoading] = useState(false)
   const category = ["Intelligence Series", "iDAC Expo"];
 
   const handleDateChange = (e) => {
     const isoString = new Date(e.value).toISOString();
-    setEditData({ ...editData, date: { $date: isoString } });
+    setEditData({ ...editData, date: isoString });
   };
+
+  const handleSave = async () => {
+    setLoading(true)
+    try {
+      await updateEvent(
+        id, editData
+      )
+      toggleSuccess()
+      fetchData()
+      toggleEdit()
+    } catch (error) {
+      toggleError()
+      toggleEdit()
+    }
+    setLoading(false)
+  }
+
+  const handleCancle = () => {
+    toggleEdit()
+  }
 
   return (
     <div>
@@ -24,7 +52,7 @@ const EditEvent = ({ data, toggleEdit }) => {
             className="w-full"
             value={editData.name}
             placeholder="Set Title"
-            onChange={(e) => setEditData({ ...editData, name: e.value })}
+            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
           />
         </div>
         <div className="card flex justify-content-center">
@@ -33,9 +61,10 @@ const EditEvent = ({ data, toggleEdit }) => {
               label="Save"
               icon="pi pi-save"
               severity="info"
-              onClick={toggleEdit}
+              loading={loading}
+              onClick={handleSave}
             />
-            <Button label="Cancel" icon="pi pi-times" severity="danger" />
+            <Button label="Cancel" icon="pi pi-times" severity="danger" onClick={handleCancle} />
           </div>
         </div>
       </div>
@@ -61,7 +90,7 @@ const EditEvent = ({ data, toggleEdit }) => {
               <div className="space-y-3 my-3 w-full">
                 <div>Date</div>
                 <Calendar
-                  value={new Date(editData.date.$date)} // correct value source & type
+                  value={new Date(editData.date?.$date || editData.date)} // correct value source & type
                   onChange={handleDateChange}
                   dateFormat="dd/mm/yy"
                   className="w-full"
@@ -73,7 +102,7 @@ const EditEvent = ({ data, toggleEdit }) => {
                   className="w-full"
                   value={editData.city}
                   placeholder="Set Title"
-                  onChange={(e) => setEditData({ ...editData, city: e.value })}
+                  onChange={(e) => setEditData({ ...editData, city: e.target.value })}
                 />
               </div>
             </div>
@@ -83,7 +112,7 @@ const EditEvent = ({ data, toggleEdit }) => {
                 className="w-full"
                 value={editData.venue}
                 placeholder="Set Venue"
-                onChange={(e) => setEditData({ ...editData, venue: e.value })}
+                onChange={(e) => setEditData({ ...editData, venue: e.target.value })}
               />
             </div>
           </div>

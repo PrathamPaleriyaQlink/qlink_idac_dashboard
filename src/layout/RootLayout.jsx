@@ -1,10 +1,32 @@
 import { Button } from "primereact/button";
 import { TabMenu } from "primereact/tabmenu";
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate, useRouteError } from "react-router-dom";
 
 const RootLayout = () => {
   const navigate = useNavigate();
+
+  const checkToken = () => {
+    const token = localStorage.getItem("token");
+    const expiry = localStorage.getItem("token_expiry");
+
+      if (!token || !expiry || new Date().getTime() > parseInt(expiry)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("token_expiry");
+        navigate("/login");
+      }
+  }
+
+  useEffect(() => {
+    checkToken()
+  }, [])
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("token_expiry");
+    navigate("/login");
+  }
+
   const items = [
     {
       label: "Home",
@@ -21,10 +43,10 @@ const RootLayout = () => {
       },
     },
     {
-      label: "Knowlegde",
-      icon: "pi pi-book",
+      label: "Events",
+      icon: "pi pi-calendar",
       command: () => {
-        navigate("/knowledge");
+        navigate("/events");
       },
     },
   ];
@@ -33,7 +55,7 @@ const RootLayout = () => {
       <div className="px-8">
         <div className="flex items-center justify-between pt-7 pb-3">
           <div className="font-semibold text-3xl">iDAC Dashboard</div>
-          <Button>Logout</Button>
+          <Button onClick={handleLogOut}>Logout</Button>
         </div>
         <TabMenu model={items} />
       </div>
