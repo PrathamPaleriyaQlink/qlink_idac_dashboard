@@ -52,7 +52,7 @@ const Knowledge = () => {
   const [event, setEvent] = useState({
     name: "",
     category: "",
-    date: { $date: "" },
+    date: { $date: new Date().toISOString() },
     city: "",
     venue: "",
   });
@@ -64,10 +64,21 @@ const Knowledge = () => {
     setEvent({ ...event, date: { $date: isoString } });
   };
 
+  const handleSave = () => {
+    const { name, category, city, date } = event;
+    if (!name || !category || !city || !date.$date) {
+      console.log(event);
+      alert("Please fill all required fields");
+      return;
+    }
+    console.log(event);
+    setVisible(false);
+  }
+
   const footerContent = (
         <div>
             <Button label="Cancel" icon="pi pi-times" severity="danger" onClick={() => setVisible(false)} className="p-button-text" />
-            <Button label="Save" icon="pi pi-save" severity="info" onClick={() => setVisible(false)} autoFocus />
+            <Button label="Save" icon="pi pi-save" severity="info" onClick={handleSave} autoFocus />
         </div>
     );
 
@@ -167,16 +178,17 @@ const Knowledge = () => {
             <div>Name</div>
             <InputText
               className="w-full"
-              value={event.venue}
+              type="text"
+              value={event.name}
               placeholder="Set of the Event"
-              onChange={(e) => setEvent({ ...event, venue: e.value })}
+              onChange={(e) => setEvent({ ...event, name: e.target.value })}
             />
           </div>
           <div className="space-y-3 my-3">
             <div>Category</div>
             <Dropdown
               value={event.category}
-              onChange={(e) => setEvent({ ...event, category: e.value })}
+              onChange={(e) => setEvent({ ...event, category: e.target.value })}
               editable
               options={category.map((c) => c)}
               placeholder="Select a Category"
@@ -200,7 +212,7 @@ const Knowledge = () => {
                 className="w-full"
                 value={event.city}
                 placeholder="Set City"
-                onChange={(e) => setEvent({ ...event, city: e.value })}
+                onChange={(e) => setEvent({ ...event, city: e.target.value })}
               />
             </div>
           </div>
@@ -210,7 +222,7 @@ const Knowledge = () => {
               className="w-full"
               value={event.venue}
               placeholder="Set Venue"
-              onChange={(e) => setEvent({ ...event, venue: e.value })}
+              onChange={(e) => setEvent({ ...event, venue: e.target.value })}
             />
           </div>
         </div>
