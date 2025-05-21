@@ -69,7 +69,7 @@ const Event = () => {
   const home = {
     label: "All Events",
     command: () => {
-      navigate("/knowledge");
+      navigate("/events");
     },
   };
 
@@ -77,7 +77,7 @@ const Event = () => {
     setDelLoading(true)
     try {
       await deleteEvent(id)
-      navigate("/knowledge")
+      navigate("/events")
     } catch (error) {
         toast.current.show({
         severity: "error",
