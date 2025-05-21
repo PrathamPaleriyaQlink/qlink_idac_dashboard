@@ -1,5 +1,5 @@
 // api_utils.js
-const BASE_URL = "http://65.20.69.130:8000";
+const BASE_URL = "https://65.20.69.130:8000";
 
 function getToken() {
     return localStorage.getItem("token");
