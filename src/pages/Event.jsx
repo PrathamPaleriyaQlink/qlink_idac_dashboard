@@ -8,7 +8,7 @@ import { Button } from "primereact/button";
 import EditEvent from "../components/events/EditEvent";
 import { deleteEvent, getEventById } from "../api_utils/api_routes";
 import { Toast } from "primereact/toast";
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
 const Event = () => {
   const { id } = useParams();
@@ -45,6 +45,7 @@ const Event = () => {
     setLoading(true);
     try {
       const res = await getEventById(id);
+      console.log(res);
       setData(res);
     } catch (error) {
       toast.current.show({
@@ -74,42 +75,39 @@ const Event = () => {
   };
 
   const handleDelete = async () => {
-    setDelLoading(true)
+    setDelLoading(true);
     try {
-      await deleteEvent(id)
-      navigate("/events")
+      await deleteEvent(id);
+      navigate("/events");
     } catch (error) {
-        toast.current.show({
+      toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "Error occured while deleting event. Please Refresh",
         life: 3000,
       });
     }
-    setDelLoading(false)
-  }
+    setDelLoading(false);
+  };
 
   const accept = () => {
-        handleDelete()
-  }
+    handleDelete();
+  };
 
-  const reject = () => {
-      
-  }
+  const reject = () => {};
 
   const deleteConfirm = () => {
-        confirmDialog({
-            message: 'Do you want to delete this record?',
-            header: 'Delete Confirmation',
-            icon: 'pi pi-info-circle',
-            defaultFocus: 'reject',
-            acceptClassName: 'p-button-danger',
-            accept,
-            reject
-        });
-    };
+    confirmDialog({
+      message: "Do you want to delete this record?",
+      header: "Delete Confirmation",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept,
+      reject,
+    });
+  };
 
-  
   return (
     <div>
       <Toast ref={toast} />
@@ -160,9 +158,7 @@ const Event = () => {
                       <div className="flex gap-6">
                         <TextCard
                           title={"Date"}
-                          value={new Date(
-                            data?.date?.$date
-                          ).toLocaleDateString()}
+                          value={new Date(data?.date).toLocaleDateString("en-GB")}
                         />
                         <TextCard title={"City"} value={data.city} />
                       </div>

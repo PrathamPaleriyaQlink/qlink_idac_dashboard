@@ -8,41 +8,61 @@ import { Calendar } from "primereact/calendar";
 import { InputTextarea } from "primereact/inputtextarea";
 import { updateEvent } from "../../api_utils/api_routes";
 
-const EditEvent = ({ data, toggleEdit, id, toggleSuccess, toggleError, fetchData }) => {
+const EditEvent = ({
+  data,
+  toggleEdit,
+  id,
+  toggleSuccess,
+  toggleError,
+  fetchData,
+}) => {
   const [editData, setEditData] = useState({
-    "name": data.name,
-    "category": data.category,
-    "date": data.date.$date,
-    "city": data.city,
-    "venue": data.venue || "N/A"
+    name: data.name,
+    category: data.category,
+    date: data.date,
+    city: data.city,
+    venue: data.venue || "N/A",
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const category = ["Intelligence Series", "iDAC Expo"];
 
   const handleDateChange = (e) => {
-    const isoString = new Date(e.value).toISOString();
-    setEditData({ ...editData, date: isoString });
+    const utcISOString = e.value.toISOString();
+    setEditData({ ...editData, date: utcISOString });
   };
 
   const handleSave = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await updateEvent(
-        id, editData
-      )
-      toggleSuccess()
-      fetchData()
-      toggleEdit()
+      const original = new Date(editData.date);
+      const utcMidnight = new Date(
+        Date.UTC(
+          original.getFullYear(),
+          original.getMonth(),
+          original.getDate(),
+          0,
+          0,
+          0
+        )
+      );
+      const isoString = utcMidnight.toISOString();
+      await updateEvent(id, {
+        ...editData,
+        date: isoString,
+      });
+      toggleSuccess();
+      fetchData();
+      toggleEdit();
     } catch (error) {
-      toggleError()
-      toggleEdit()
+      toggleError();
+      toggleEdit();
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   const handleCancle = () => {
-    toggleEdit()
-  }
+    toggleEdit();
+  };
 
   return (
     <div>
@@ -64,7 +84,12 @@ const EditEvent = ({ data, toggleEdit, id, toggleSuccess, toggleError, fetchData
               loading={loading}
               onClick={handleSave}
             />
-            <Button label="Cancel" icon="pi pi-times" severity="danger" onClick={handleCancle} />
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              severity="danger"
+              onClick={handleCancle}
+            />
           </div>
         </div>
       </div>
@@ -90,7 +115,7 @@ const EditEvent = ({ data, toggleEdit, id, toggleSuccess, toggleError, fetchData
               <div className="space-y-3 my-3 w-full">
                 <div>Date</div>
                 <Calendar
-                  value={new Date(editData.date?.$date || editData.date)} // correct value source & type
+                  value={editData.date ? new Date(editData.date) : null} // correct value source & type
                   onChange={handleDateChange}
                   dateFormat="dd/mm/yy"
                   className="w-full"
@@ -102,7 +127,9 @@ const EditEvent = ({ data, toggleEdit, id, toggleSuccess, toggleError, fetchData
                   className="w-full"
                   value={editData.city}
                   placeholder="Set Title"
-                  onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                  onChange={(e) =>
+                    setEditData({ ...editData, city: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -112,7 +139,9 @@ const EditEvent = ({ data, toggleEdit, id, toggleSuccess, toggleError, fetchData
                 className="w-full"
                 value={editData.venue}
                 placeholder="Set Venue"
-                onChange={(e) => setEditData({ ...editData, venue: e.target.value })}
+                onChange={(e) =>
+                  setEditData({ ...editData, venue: e.target.value })
+                }
               />
             </div>
           </div>

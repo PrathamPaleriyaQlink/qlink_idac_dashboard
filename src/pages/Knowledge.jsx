@@ -31,6 +31,7 @@ const Knowledge = () => {
     setLoading(true);
     try {
       const eventsData = await getEvents();
+      console.log(eventsData)
       setData(eventsData);
     } catch (error) {
       toast.current.show({
@@ -50,8 +51,8 @@ const Knowledge = () => {
   const category = ["Intelligence Series", "iDAC Expo"];
 
   const handleDateChange = (e) => {
-    const isoString = new Date(e.value).toISOString();
-    setEvent({ ...event, date: isoString });
+    const utcISOString = e.value.toISOString();
+    setEvent({ ...event, date: utcISOString });
   };
 
   const handleSave = async (e) => {
@@ -68,7 +69,22 @@ const Knowledge = () => {
     }
     try {
       setLoading(true);
-      await addEvent(event);
+      const original = new Date(event.date);
+      const utcMidnight = new Date(
+        Date.UTC(
+          original.getFullYear(),
+          original.getMonth(),
+          original.getDate(),
+          0,
+          0,
+          0
+        )
+      );
+      const isoString = utcMidnight.toISOString();
+      await addEvent({
+        ...event,
+        date: isoString,
+      });
       await fetchData();
       setVisible(false);
     } catch (error) {
@@ -161,7 +177,7 @@ const Knowledge = () => {
                 field="date"
                 header="Date"
                 body={(rowData) =>
-                  new Date(rowData.date).toLocaleDateString()
+                  new Date(rowData.date).toLocaleDateString("en-GB")
                 }
                 style={{ width: "20%" }}
                 sortable
