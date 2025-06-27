@@ -295,15 +295,16 @@ const Campaign = () => {
                 />
               </label>
 
-              <Button
-                label="Download Sample"
-                loading={loading}
-                icon="pi pi-file-excel"
-                severity="info"
-                className="flex-1"
-                outlined
-                tooltip="Download sample excel file"
-              />
+              <a href="/idac_template_sample.xlsx" download>
+                <Button
+                  label="Download Sample"
+                  icon="pi pi-file-excel"
+                  severity="info"
+                  className="flex-1"
+                  outlined
+                  tooltip="Download sample excel file"
+                />
+              </a>
             </div>
 
             {event.file && (
