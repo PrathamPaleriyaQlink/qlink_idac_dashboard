@@ -251,9 +251,10 @@ const Campaign = () => {
         </div>
       ) : (
         <div className="w-full h-[200px] bg-[#1e1e1e] rounded-xl text-white/80 flex items-center justify-center">
-          {selectCampaign == ""
-            ? "ⓘ Select an event to view its campaign details."
-            : "No details available"}
+          {selectCampaign 
+            ? "No details available"
+            : "ⓘ Select an event to view its campaign details."
+          }
         </div>
       )}
 
