@@ -14,6 +14,13 @@ function authHeaders() {
     };
 }
 
+function authHeaders2() {
+    const token = getToken();
+    return {
+        Authorization: `Bearer ${token}`
+    };
+}
+
 export async function login(username, password) {
     const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
@@ -122,3 +129,48 @@ export async function deleteEvent(id) {
 
     return response.json();
 }
+
+export async function getAllCampaign(id) {
+    const response = await fetch(`${BASE_URL}/list_campaign`, {
+        method: "GET",
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch event");
+
+    return response.json();
+}
+
+export async function sendMessage({ event, file, contacts }) {
+    const formData = new FormData();
+    formData.append("event", event);
+
+    if (file) {
+        formData.append("file", file);
+    } else if (contacts) {
+        formData.append("contacts", JSON.stringify(contacts));
+    }
+
+    const response = await fetch(`${BASE_URL}/send-message`, {
+        method: "POST",
+        headers: authHeaders2(),
+        body: formData,
+    });
+
+    if (!response.ok) throw new Error("Failed to send message");
+
+    return response.json();
+}
+
+export async function getCampaginAnalytics(event) {
+    const response = await fetch(`${BASE_URL}/get_campaign?event=${event}`, {
+        method: "GET",
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch analytics");
+
+    return response.json();
+}
+
+

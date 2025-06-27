@@ -31,7 +31,6 @@ const Knowledge = () => {
     setLoading(true);
     try {
       const eventsData = await getEvents();
-      console.log(eventsData)
       setData(eventsData);
     } catch (error) {
       toast.current.show({

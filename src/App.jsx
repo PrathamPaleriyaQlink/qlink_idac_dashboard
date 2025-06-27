@@ -10,6 +10,7 @@ import Knowledge from './pages/Knowledge';
 import Person from './pages/Person';
 import Event from './pages/Event';
 import Login from './pages/Login';
+import Campaign from './pages/Campaign';
 
 
 
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
         <Route path='/people/:id' element={<Person/>}/>
         <Route path='/events' element={<Knowledge/>}/>
         <Route path='/events/:id' element={<Event/>}/>
+        <Route path='/campaign' element={<Campaign/>}/>
       </Route>
       <Route path='/login' element={<Login/>}/>
     </>

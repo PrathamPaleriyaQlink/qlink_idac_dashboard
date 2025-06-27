@@ -49,6 +49,13 @@ const RootLayout = () => {
         navigate("/events");
       },
     },
+    {
+      label: "campaign",
+      icon: "pi pi-megaphone",
+      command: () => {
+        navigate("/campaign");
+      },
+    },
   ];
   return (
     <div className="w-full h-screen flex flex-col">
