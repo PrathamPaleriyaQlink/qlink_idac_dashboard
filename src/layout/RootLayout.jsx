@@ -50,6 +50,13 @@ const RootLayout = () => {
       },
     },
     {
+      label: "Registrations",
+      icon: "pi pi-ticket",
+      command: () => {
+        navigate("/registrations");
+      },
+    },
+    {
       label: "campaign",
       icon: "pi pi-megaphone",
       command: () => {

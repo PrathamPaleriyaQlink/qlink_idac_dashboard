@@ -11,6 +11,7 @@ import Person from './pages/Person';
 import Event from './pages/Event';
 import Login from './pages/Login';
 import Campaign from './pages/Campaign';
+import Registrations from './pages/Registrations';
 
 
 
@@ -24,6 +25,7 @@ const router = createBrowserRouter(
         <Route path='/events' element={<Knowledge/>}/>
         <Route path='/events/:id' element={<Event/>}/>
         <Route path='/campaign' element={<Campaign/>}/>
+        <Route path='/registrations' element={<Registrations/>}/>
       </Route>
       <Route path='/login' element={<Login/>}/>
     </>

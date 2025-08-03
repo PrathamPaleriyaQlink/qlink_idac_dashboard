@@ -70,6 +70,16 @@ export async function getEvents() {
     return response.json();
 }
 
+export async function getRegistrations(source) {
+    const response = await fetch(`${BASE_URL}/list_registrations?source=${source}`, {
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch events");
+
+    return response.json();
+}
+
 export async function getEventById(id) {
     const response = await fetch(`${BASE_URL}/event?id=${id}`, {
         method: "POST",
