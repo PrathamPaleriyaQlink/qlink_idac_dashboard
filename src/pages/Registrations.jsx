@@ -134,7 +134,9 @@ const Registrations = () => {
     <div className="my-10">
       <Toast ref={toast} />
       <div className="w-full flex items-center justify-between">
-        <div className="text-3xl">All Registrations</div>
+        <div className="text-3xl">
+          {`All Registrations - ( ${source} )`}
+        </div>
         <div>
             <button 
                 className={`${source === "idac" ? "bg-blue-200 border-blue-200" : "bg-transparent text-white  border-blue-200"}  px-6 py-2 border text-black text-lg rounded-l-md transition-all cursor-pointer`}
@@ -155,7 +157,7 @@ const Registrations = () => {
         <div className="my-5 h-full">
           {data.length > 0 ? (
             <DataTable
-              onRowClick={(e) => navigate(`/events/${e.data._id}`)}
+              onRowClick={(e) => navigate(`/registrations/${e.data._id}`)}
               value={data}
               paginator
               rows={5}

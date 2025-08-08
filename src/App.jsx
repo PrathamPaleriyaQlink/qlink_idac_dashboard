@@ -12,6 +12,7 @@ import Event from './pages/Event';
 import Login from './pages/Login';
 import Campaign from './pages/Campaign';
 import Registrations from './pages/Registrations';
+import RegistDetails from './pages/RegistDetails';
 
 
 
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
         <Route path='/events/:id' element={<Event/>}/>
         <Route path='/campaign' element={<Campaign/>}/>
         <Route path='/registrations' element={<Registrations/>}/>
+        <Route path='/registrations/:id' element={<RegistDetails/>}/>
       </Route>
       <Route path='/login' element={<Login/>}/>
     </>
