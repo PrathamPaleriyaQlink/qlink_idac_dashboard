@@ -12,11 +12,12 @@ const Conversation = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [source, setSource] = useState("idac");
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const users = await getUsers();
+      const users = await getUsers(source);
       setData(users);
     } catch (error) {
       toast.current.show({
@@ -33,10 +34,28 @@ const Conversation = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    fetchData();
+  }, [source])
+
   return (
     <div className="my-10">
       <Toast ref={toast} />
-      <div className="text-3xl">All Contacts</div>
+      <div className="w-full flex items-center justify-between">
+        <div className="text-3xl">
+          {`All Conversations - ( ${source} )`}
+        </div>
+        <div>
+            <button 
+                className={`${source === "idac" ? "bg-blue-200 border-blue-200" : "bg-transparent text-white  border-blue-200"}  px-6 py-2 border text-black text-lg rounded-l-md transition-all cursor-pointer`}
+                onClick={() => setSource("idac")}
+            >iDAC</button>
+            <button 
+                className={`${source === "fsie" ? "bg-blue-200 border-blue-200" : "bg-transparent text-white  border-blue-200"}  px-6 py-2 border text-black text-lg rounded-r-md transition-all cursor-pointer`}
+                onClick={() => setSource("fsie")}
+            >FSIE</button>
+        </div>
+      </div>
       {loading ? (
         <div className="my-5 h-full">
           <Skeleton height="400px" width="100%" borderRadius="10px" />
